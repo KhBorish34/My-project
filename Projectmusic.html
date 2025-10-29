@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicNishan - Discover New Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a3de8;
+            --dark: #121212;
+            --light-dark: #181818;
+            --light: #ffffff;
+            --gray: #b3b3b3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            grid-template-rows: auto 1fr auto;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--dark);
+            padding: 20px;
+            grid-row: 1 / 4;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-item {
+            padding: 10px 0;
+            color: var(--gray);
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-item:hover {
+            color: var(--light);
+        }
+        
+        /* Main Content */
+        .header {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .search-bar {
+            background-color: var(--light);
+            border-radius: 20px;
+            padding: 8px 15px;
+            width: 300px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            background: transparent;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+        
+        .content {
+            background: linear-gradient(to bottom, #1e1e1e, var(--dark));
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .music-card {
+            background-color: var(--light-dark);
+            padding: 15px;
+            border-radius: 6px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .music-card:hover {
+            background-color: #282828;
+            transform: scale(1.03);
+        }
+        
+        .music-card img {
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+        
+        .music-card h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .music-card p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        /* Player */
+        .player {
+            background-color: var(--light-dark);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            grid-column: 2;
+            position: relative;
+        }
+        
+        .song-info {
+            display: flex;
+            align-items: center;
+            width: 25%;
+            gap: 15px;
+        }
+        
+        .song-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+        }
+        
+        .song-text h4 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .song-text p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .song-info button {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50%;
+        }
+        
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .control-buttons button {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 16px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .control-buttons button:hover {
+            color: var(--primary);
+        }
+        
+        .control-buttons .play-btn {
+            font-size: 24px;
+            background-color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-buttons .play-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .progress-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .progress-time {
+            font-size: 12px;
+            color: var(--gray);
+            width: 40px;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #535353;
+            border-radius: 2px;
+            flex-grow: 1;
+            margin: 0 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 2px;
+            width: 0%;
+        }
+        
+        .player-options {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 25%;
+        }
+        
+        .player-options button {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 16px;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .volume-bar {
+            height: 4px;
+            background-color: #535353;
+            border-radius: 2px;
+            width: 80px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .volume-progress {
+            height: 100%;
+            background-color: var(--gray);
+            border-radius: 2px;
+            width: 70%;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .player {
+                grid-column: 1;
+            }
+            
+            .song-info {
+                width: 40%;
+            }
+            
+            .player-controls {
+                width: 60%;
+            }
+            
+            .player-options {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-music"></i>
+            <span>MusicPlay</span>
+        </div>
+        <div class="nav-item"><i class="fas fa-home"></i> Home</div>
+        <div class="nav-item"><i class="fas fa-search"></i> Search</div>
+        <div class="nav-item"><i class="fas fa-book"></i> Your Library</div>
+        <div class="nav-item"><i class="fas fa-plus-square"></i> Create Playlist</div>
+        <div class="nav-item"><i class="fas fa-heart"></i> Liked Songs</div>
+        <div class="playlists" style="margin-top: 20px;">
+            <h4 style="color: var(--gray); margin-bottom: 15px;">PLAYLISTS</h4>
+            <div class="nav-item">Discover Weekly</div>
+            <div class="nav-item">Chill Vibes</div>
+            <div class="nav-item">Workout Mix</div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <header class="header">
+        <div class="navigation">
+            <button><i class="fas fa-chevron-left"></i></button>
+            <button><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search for artists, songs, or podcasts">
+        </div>
+        <div class="user-profile">
+            <img src="data:image/jpeg;base64,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" alt="User">
+            <span>Demon King</span>
+        </div>
+    </header>
+    
+    <main class="content">
+        <h2 class="section-title">Recently Played</h2>
+        <div class="music-grid">
+            <div class="music-card" onclick="playSong(0)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVJUVmtYK9sIoJc3zEhwCEIgFdmdK2TK6dw&s,1" alt="Album Cover">
+                <h3>Midnight Memories</h3>
+                <p>The Night Owls</p>
+            </div>
+            <div class="music-card" onclick="playSong(1)">
+                <img src="https://i.ytimg.com/vi/PzrZyb_ZuVM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAUR7bCR1qac64reuYAR_zXAbO3Aw,2" alt="Album Cover">
+                <h3>Summer Breeze</h3>
+                <p>Coastal Sounds</p>
+            </div>
+            <div class="music-card" onclick="playSong(2)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPQjWee72rZXn8CW3141oT9124dYBsjjaDwQ&s,3" alt="Album Cover">
+                <h3>Urban Echoes</h3>
+                <p>City Lights</p>
+            </div>
+            <div class="music-card" onclick="playSong(3)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpKYs5yjksOeNJOWbilC243Yp5WEfaJIEdMQ&s,4" alt="Album Cover">
+                <h3>Mountain High</h3>
+                <p>Wilderness Collective</p>
+            </div>
+            <div class="music-card" onclick="playSong(4)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHVrxNsYupxkV_FXJfLCmL6Rztwr4VptPvOw&s,5" alt="Album Cover">
+                <h3>Jazz in Paris</h3>
+                <p>Vinyl Cafe</p>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Made For You</h2>
+        <div class="music-grid">
+            <div class="music-card" onclick="playSong(5)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzZfIPQdDWBvemTYfw4dKlJWT4cyKERDBgiw&s,6" alt="Album Cover">
+                <h3>Your Daily Mix 1</h3>
+                <p>Discover new music based on your taste</p>
+            </div>
+            <div class="music-card" onclick="playSong(6)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtuZLQsR4gr1X0cHE6cuZ1EvwPz7xA0tGSvQ&s,7" alt="Album Cover">
+                <h3>Your Daily Mix 2</h3>
+                <p>Discover new music based on your taste</p>
+            </div>
+            <div class="music-card" onclick="playSong(7)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7VLDKE9Du8mTbbXuPkkyS_VD0oAo5xT5bEQ&s,8" alt="Album Cover">
+                <h3>Your Daily Mix 3</h3>
+                <p>Discover new music based on your taste</p>
+            </div>
+            <div class="music-card" onclick="playSong(8)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjxz8DglLrTUapsJ6GG3POrESJLQUZayvcGQ&s,9" alt="Album Cover">
+                <h3>Your Daily Mix 4</h3>
+                <p>Discover new music based on your taste</p>
+            </div>
+            <div class="music-card" onclick="playSong(9)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpsFgP6IfZ6lZUlaz0XMiLoXvL5Es0c6ARmA&s,10" alt="Album Cover">
+                <h3>Your Daily Mix 5</h3>
+                <p>Discover new music based on your taste</p>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Player -->
+    <div class="player">
+        <div class="song-info">
+            <img id="now-playing-cover" src="https://source.unsplash.com/random/300x300/?album,cover,11" alt="Now Playing">
+            <div class="song-text">
+                <h4 id="now-playing-title">Golden Hour</h4>
+                <p id="now-playing-artist">Sunset Serenade</p>
+            </div>
+            <button><i class="far fa-heart"></i></button>
+        </div>
+        
+        <div class="player-controls">
+            <div class="control-buttons">
+                <button id="shuffle-btn"><i class="fas fa-random"></i></button>
+                <button id="prev-btn"><i class="fas fa-step-backward"></i></button>
+                <button class="play-btn" id="play-btn"><i class="fas fa-pause" id="play-icon"></i></button>
+                <button id="next-btn"><i class="fas fa-step-forward"></i></button>
+                <button id="repeat-btn"><i class="fas fa-redo"></i></button>
+            </div>
+            <div class="progress-container">
+                <span class="progress-time" id="current-time">0:00</span>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <span class="progress-time" id="duration">0:00</span>
+            </div>
+        </div>
+        
+        <div class="player-options">
+            <button><i class="fas fa-list"></i></button>
+            <button><i class="fas fa-laptop"></i></button>
+            <div class="volume-container">
+                <button><i class="fas fa-volume-up"></i></button>
+                <div class="volume-bar" id="volume-bar">
+                    <div class="volume-progress" id="volume-progress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Music data
+        const songs = [
+            {
+                title: "Midnight Memories",
+                artist: "The Night Owls",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVJUVmtYK9sIoJc3zEhwCEIgFdmdK2TK6dw&s",
+                audio: "C:\Users\basum\OneDrive\Desktop\Music song"
+            },
+            {
+                title: "Summer Breeze",
+                artist: "Coastal Sounds",
+                cover: "https://i.ytimg.com/vi/PzrZyb_ZuVM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAUR7bCR1qac64reuYAR_zXAbO3Aw",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            },
+            {
+                title: "Urban Echoes",
+                artist: "City Lights",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPQjWee72rZXn8CW3141oT9124dYBsjjaDwQ&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+            },
+            {
+                title: "Mountain High",
+                artist: "Wilderness Collective",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpKYs5yjksOeNJOWbilC243Yp5WEfaJIEdMQ&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            },
+            {
+                title: "Jazz in Paris",
+                artist: "Vinyl Cafe",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHVrxNsYupxkV_FXJfLCmL6Rztwr4VptPvOw&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+            },
+            {
+                title: "Your Daily Mix 1",
+                artist: "MusicPlay",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzZfIPQdDWBvemTYfw4dKlJWT4cyKERDBgiw&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
+            },
+            {
+                title: "Your Daily Mix 2",
+                artist: "MusicPlay",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtuZLQsR4gr1X0cHE6cuZ1EvwPz7xA0tGSvQ&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"
+            },
+            {
+                title: "Your Daily Mix 3",
+                artist: "MusicPlay",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7VLDKE9Du8mTbbXuPkkyS_VD0oAo5xT5bEQ&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+            },
+            {
+                title: "Your Daily Mix 4",
+                artist: "MusicPlay",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjxz8DglLrTUapsJ6GG3POrESJLQUZayvcGQ&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+            },
+            {
+                title: "Your Daily Mix 5",
+                artist: "MusicPlay",
+                cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpsFgP6IfZ6lZUlaz0XMiLoXvL5Es0c6ARmA&s",
+                audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"
+            }
+        ];
+
+        // Player elements
+        const audio = new Audio();
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let isShuffle = false;
+        let isRepeat = false;
+
+        // DOM elements
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const nowPlayingCover = document.getElementById('now-playing-cover');
+        const nowPlayingTitle = document.getElementById('now-playing-title');
+        const nowPlayingArtist = document.getElementById('now-playing-artist');
+        const volumeBar = document.getElementById('volume-bar');
+        const volumeProgress = document.getElementById('volume-progress');
+
+        // Initialize player
+        function initPlayer() {
+            loadSong(currentSongIndex);
+            
+            // Event listeners
+            playBtn.addEventListener('click', togglePlay);
+            prevBtn.addEventListener('click', prevSong);
+            nextBtn.addEventListener('click', nextSong);
+            shuffleBtn.addEventListener('click', toggleShuffle);
+            repeatBtn.addEventListener('click', toggleRepeat);
+            progressBar.addEventListener('click', setProgress);
+            volumeBar.addEventListener('click', setVolume);
+            
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', songEnded);
+            audio.addEventListener('loadedmetadata', updateDuration);
+        }
+
+        // Load song
+        function loadSong(index) {
+            const song = songs[index];
+            audio.src = song.audio;
+            nowPlayingCover.src = song.cover;
+            nowPlayingTitle.textContent = song.title;
+            nowPlayingArtist.textContent = song.artist;
+            
+            if (isPlaying) {
+                audio.play();
+            }
+        }
+
+        // Play song
+        function playSong(index) {
+            if (typeof index === 'number') {
+                currentSongIndex = index;
+                loadSong(currentSongIndex);
+            }
+            
+            isPlaying = true;
+            playIcon.classList.replace('fa-play', 'fa-pause');
+            audio.play();
+        }
+
+        // Pause song
+        function pauseSong() {
+            isPlaying = false;
+            playIcon.classList.replace('fa-pause', 'fa-play');
+            audio.pause();
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            isPlaying ? pauseSong() : playSong();
+        }
+
+        // Previous song
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+            if (isPlaying) playSong();
+        }
+
+        // Next song
+        function nextSong() {
+            if (isShuffle) {
+                currentSongIndex = Math.floor(Math.random() * songs.length);
+            } else {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+            }
+            loadSong(currentSongIndex);
+            if (isPlaying) playSong();
+        }
+
+        // Song ended
+        function songEnded() {
+            if (isRepeat) {
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                nextSong();
+            }
+        }
+
+        // Toggle shuffle
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            shuffleBtn.style.color = isShuffle ? 'var(--primary)' : 'var(--light)';
+        }
+
+        // Toggle repeat
+        function toggleRepeat() {
+            isRepeat = !isRepeat;
+            repeatBtn.style.color = isRepeat ? 'var(--primary)' : 'var(--light)';
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const { duration, currentTime } = audio;
+            const progressPercent = (currentTime / duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+            
+            // Update current time
+            currentTimeEl.textContent = formatTime(currentTime);
+        }
+
+        // Update duration
+        function updateDuration() {
+            durationEl.textContent = formatTime(audio.duration);
+        }
+
+        // Format time (seconds to MM:SS)
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Set progress on click
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+
+        // Set volume
+        function setVolume(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const volume = clickX / width;
+            audio.volume = volume;
+            volumeProgress.style.width = `${volume * 100}%`;
+        }
+
+        // Initialize the player
+        initPlayer();
+    </script>
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bankro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8298fa 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .bank-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        /* Main App Styles */
+        .main-app {
+            display: none;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .balance-display {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .balance-amount {
+            font-size: 2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .transactions-card {
+            grid-column: 1 / -1;
+        }
+
+        .transaction-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .transaction-item:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
+        }
+
+        .transaction-item.deposit {
+            border-left-color: #28a745;
+        }
+
+        .transaction-item.withdrawal {
+            border-left-color: #dc3545;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-type {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .transaction-date {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .transaction-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .transaction-amount.positive {
+            color: #28a745;
+        }
+
+        .transaction-amount.negative {
+            color: #dc3545;
+        }
+
+        .account-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 10px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .demo-credentials {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .demo-credentials p {
+            color: #333;
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+
+        .demo-credentials strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .login-card {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="bank-icon">🏦</div>
+                <h1>SecureBank</h1>
+                <p>Access Your Account</p>
+            </div>
+            
+            <div id="loginMessage" class="message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        
+       
+        </div>
+    </div>
+
+    <!-- Main Banking Application -->
+    <div id="mainApp" class="main-app">
+        <div class="container">
+            <header>
+                <div class="header-top">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">D</div>
+                        <div>
+                            <h3 style="color: #333; margin-bottom: 5px;">Welcome, <span id="userName">User</span></h3>
+                            <p style="color: #666; font-size: 0.9em;">Account Active</p>
+                        </div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+                
+                <h1>🏦 Bank Management System</h1>
+                <div class="balance-display">
+                    Current Balance: <span class="balance-amount" id="balance">$0.00</span>
+                </div>
+                <div class="account-info">
+                    <div class="info-item">
+                        <div class="info-label">Total Deposits</div>
+                        <div class="info-value" id="totalDeposits">$0.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Total Withdrawals</div>
+                        <div class="info-value" id="totalWithdrawals">$0.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Transactions</div>
+                        <div class="info-value" id="transactionCount">0</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <div class="card">
+                    <h2>💰 Deposit</h2>
+                    <div id="depositMessage" class="message"></div>
+                    <form id="depositForm">
+                        <div class="form-group">
+                            <label for="depositAmount">Amount ($)</label>
+                            <input type="number" id="depositAmount" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="depositDescription">Description</label>
+                            <input type="text" id="depositDescription" placeholder="e.g., Salary, Gift" required>
+                        </div>
+                        <button type="submit">Deposit Funds</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>💸 Withdraw</h2>
+                    <div id="withdrawMessage" class="message"></div>
+                    <form id="withdrawForm">
+                        <div class="form-group">
+                            <label for="withdrawAmount">Amount ($)</label>
+                            <input type="number" id="withdrawAmount" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="withdrawDescription">Description</label>
+                            <input type="text" id="withdrawDescription" placeholder="e.g., Rent, Groceries" required>
+                        </div>
+                        <button type="submit">Withdraw Funds</button>
+                    </form>
+                </div>
+
+                <div class="card transactions-card">
+                    <h2>📊 Transaction History</h2>
+                    <div class="transaction-list" id="transactionList">
+                        <p style="text-align: center; color: #999; padding: 20px;">No transactions yet. Start by making a deposit!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User accounts (in production, this would be server-side)
+        const users = {
+            'demo': { password: 'demo123', name: 'Demo User' },
+            'admin': { password: 'admin123', name: 'Admin' }
+        };
+
+        let currentUser = null;
+        let balance = 0;
+        let transactions = [];
+        let totalDeposits = 0;
+        let totalWithdrawals = 0;
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (users[username] && users[username].password === password) {
+                currentUser = {
+                    username: username,
+                    name: users[username].name
+                };
+                
+                // Update UI with user info
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                // Show main app, hide login
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                showMessage('loginMessage', 'Login successful!', 'success');
+            } else {
+                showMessage('loginMessage', 'Invalid username or password!', 'error');
+            }
+        });
+
+        // Logout functionality
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                balance = 0;
+                transactions = [];
+                totalDeposits = 0;
+                totalWithdrawals = 0;
+                
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('loginForm').reset();
+                
+                updateBalance();
+                renderTransactions();
+            }
+        }
+
+        function updateBalance() {
+            document.getElementById('balance').textContent = $${balance.toFixed(2)};
+            document.getElementById('totalDeposits').textContent = $${totalDeposits.toFixed(2)};
+            document.getElementById('totalWithdrawals').textContent = $${totalWithdrawals.toFixed(2)};
+            document.getElementById('transactionCount').textContent = transactions.length;
+        }
+
+        function showMessage(elementId, message, type) {
+            const msgEl = document.getElementById(elementId);
+            msgEl.textContent = message;
+            msgEl.className = message ${type};
+            setTimeout(() => {
+                msgEl.style.display = 'none';
+            }, 3000);
+        }
+
+        function addTransaction(type, amount, description) {
+            const transaction = {
+                id: Date.now(),
+                type: type,
+                amount: amount,
+                description: description,
+                date: new Date().toLocaleString(),
+                user: currentUser.name
+            };
+            
+            transactions.unshift(transaction);
+            renderTransactions();
+        }
+
+        function renderTransactions() {
+            const listEl = document.getElementById('transactionList');
+            
+            if (transactions.length === 0) {
+                listEl.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No transactions yet. Start by making a deposit!</p>';
+                return;
+            }
+
+            listEl.innerHTML = transactions.map(t => `
+                <div class="transaction-item ${t.type}">
+                    <div class="transaction-details">
+                        <div class="transaction-type">${t.type}</div>
+                        <div>${t.description}</div>
+                        <div class="transaction-date">${t.date}</div>
+                    </div>
+                    <div class="transaction-amount ${t.type === 'deposit' ? 'positive' : 'negative'}">
+                        ${t.type === 'deposit' ? '+' : '-'}$${t.amount.toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('depositForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const description = document.getElementById('depositDescription').value;
+
+            if (amount <= 0) {
+                showMessage('depositMessage', 'Amount must be greater than 0!', 'error');
+                return;
+            }
+
+            balance += amount;
+            totalDeposits += amount;
+            addTransaction('deposit', amount, description);
+            updateBalance();
+            
+            showMessage('depositMessage', Successfully deposited $${amount.toFixed(2)}!, 'success');
+            e.target.reset();
+        });
+
+        document.getElementById('withdrawForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const description = document.getElementById('withdrawDescription').value;
+
+            if (amount <= 0) {
+                showMessage('withdrawMessage', 'Amount must be greater than 0!', 'error');
+                return;
+            }
+
+            if (amount > balance) {
+                showMessage('withdrawMessage', 'Insufficient funds!', 'error');
+                return;
+            }
+
+            balance -= amount;
+            totalWithdrawals += amount;
+            addTransaction('withdrawal', amount, description);
+            updateBalance();
+            
+            showMessage('withdrawMessage', Successfully withdrew $${amount.toFixed(2)}!, 'success');
+            e.target.reset();
+        });
+
+        updateBalance();
+    </script>
+</body>
+</html>
